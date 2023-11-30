@@ -1,0 +1,63 @@
+from collections import deque
+
+class WaterJugProblem:
+    def __init__(self, jug1_capacity, jug2_capacity, target_amount):
+        self.jug1_capacity = jug1_capacity
+        self.jug2_capacity = jug2_capacity
+        self.target_amount = target_amount
+        self.visited_states = set()
+
+    def is_goal_state(self, state):
+        return state[0] == self.target_amount or state[1] == self.target_amount
+
+    def get_successor_states(self, current_state):
+        jug1, jug2 = current_state
+        successors = []
+
+
+        successors.append((self.jug1_capacity, jug2))
+
+        successors.append((jug1, self.jug2_capacity))
+
+
+        successors.append((0, jug2))
+
+        successors.append((jug1, 0))
+
+        
+        pour_amount = min(jug1, self.jug2_capacity - jug2)
+        successors.append((jug1 - pour_amount, jug2 + pour_amount))
+
+        
+        pour_amount = min(self.jug1_capacity - jug1, jug2)
+        successors.append((jug1 + pour_amount, jug2 - pour_amount))
+
+        return successors
+
+    def dfs(self, current_state):
+        if self.is_goal_state(current_state):
+            return True
+
+        self.visited_states.add(current_state)
+
+        for successor in self.get_successor_states(current_state):
+            if successor not in self.visited_states:
+                if self.dfs(successor):
+                    print(successor)
+                    return True
+
+        return False
+
+    def solve(self):
+        initial_state = (0, 0)
+        print("Steps to reach the target state:")
+        if not self.dfs(initial_state):
+            print("Solution not found.")
+
+if __name__ == "__main__":
+    jug1_capacity = 4
+    jug2_capacity = 3
+    target_amount = 2
+
+    water_jug_problem = WaterJugProblem(jug1_capacity, jug2_capacity, target_amount)
+    water_jug_problem.solve()
